@@ -1,0 +1,53 @@
+<fieldset class="generic-box sell-yours-index-box" style="margin-top: 30px;padding-bottom: 0px!important">
+    <div class="box-head"><h3>Subir archivo *.CSV para creación masiva  </h3>(Ej. <a href="http://www.wypo.cl/media/ejemplo.csv">ejemplo.csv</a>) 
+<strong>Se recomienda usar OpenCalc</strong> para el manejo de los archivos *.CSV.
+</div>	
+	<form id="upload_csv_form" action="<?php echo $this->getUrl('udprod/bulkupload/csv');?>" method="post" enctype="multipart/form-data" >
+		<div class="generic-box col2-set">
+			<div class="col-1">
+				<ul class="form-list">
+					<li><b>Paso 1:</b>Seleccionar archivo</li>
+					<li><input type="file" name="upload_csv_file" id="upload_csv_file" class="required-entry validate_csv_file_only" /></li>
+				</ul>
+			</div>
+			<div class="col-2">
+				<ul class="form-list">
+					<li><b>Paso 2:</b>Subir archivo</li>
+					<li><input type="submit" class="form-button" value="Subir Archivo" /></li>
+					</li>
+				</ul>
+			</div>		
+		</div>
+	</form>
+	<div class="box-head col2-set" style="margin-bottom: 0px ! important; margin-top: 18px;">
+		<?php 
+		$session = Mage::getSingleton('udropship/session');
+		$_csv_file_name = $session->getVendor()->getData("vendor_id")."_".$session->getVendor()->getData("vendor_name").".csv";
+		$uploaded_filename = Mage::getBaseDir().'/up/magmi/import/'.$_csv_file_name;
+		$processed_filename = Mage::getBaseDir().'/up/magmi/import/processed/'.$_csv_file_name;
+		if (file_exists($uploaded_filename)) { ?>
+			<ul class="col-1" style="border-right: 1px solid #c1c1c1;">
+				<li>Last file: <b><?php echo $session->getVendor()->getData("last_uploaded_file_name"); ?></b> was uploaded at <b><?php echo date ("l jS \of F Y h:i:s A",  strtotime($session->getVendor()->getData("file_upload_datetime")));?></b></li>
+			</ul>	
+			<ul class="col-2">
+			<?php if (file_exists($processed_filename)) { ?>
+				<li>Last  processed at <b><?php echo date ("l jS \of F Y h:i:s A", filemtime($processed_filename));?></b></li>
+			<?php }else{ ?>
+				<li>File not processed yet.	</li>
+			<?php } ?>
+			</ul>
+		<?php } else { ?>
+			<ul class="col-1">
+				<li>No se ha subido ningún archivo.</li>
+			</ul>	
+		<?php } ?>	
+	</div>
+</fieldset>
+<script type="text/javascript">
+    //< ![CDATA[
+        var customForm = new VarienForm('upload_csv_form');
+		Validation.add('validate_csv_file_only','Please select only CSV file.',function(v){			
+			if(v.toLowerCase().lastIndexOf(".csv")==-1){return false;}else{return true;}	
+		});
+    //]]>
+</script>
